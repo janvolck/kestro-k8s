@@ -1,0 +1,8 @@
+[Unit]
+Description=Automatically mount NFS lib folder
+
+[Mount]
+Where=/srv/nfs/lib
+
+[Install]
+WantedBy=local-fs.target

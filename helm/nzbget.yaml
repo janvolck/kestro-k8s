@@ -1,0 +1,15 @@
+nzbget:
+  env:
+    TZ: Europe/Brussels
+
+  nodeSelector:
+    kestro.home/availability: high
+
+  additionalVolumes:
+    - name: nzb-main-dir
+      hostPath:
+          path: "/media/nzb"
+          
+  additionalVolumeMounts:
+    - name: nzb-main-dir
+      mountPath: /media/nzb

@@ -1,0 +1,102 @@
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: media-vlan
+  namespace: kestro-media
+spec:
+  config: '{
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "eth0.100",
+          "mode": "bridge",
+          "ipam": {
+            "type": "dhcp"
+          }
+        }, {
+          "capabilities": { "mac": true },
+          "type": "tuning"
+        }
+      ]
+    }'
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: emby-server
+  namespace: kestro-media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emby-server
+  template:
+    metadata:
+      labels:
+        app: emby-server
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+              { "name": "media-vlan",
+                "interface": "media0",
+                "mac": "b8:27:eb:ca:ab:80"
+              }]'
+    spec:
+      containers:
+      - name: emby-server
+        image: emby/embyserver_arm64v8:4.8.0.15
+        ports:
+        - containerPort: 8096
+        - containerPort: 8920
+        volumeMounts:
+        - mountPath: /config
+          name: emby-config
+        - mountPath: /mnt/music
+          name: emby-music
+      volumes:
+      - name: emby-config
+        nfs:
+          server: rpi4-k8s-master
+          path: /srv/nfs/lib/emby
+      - name: emby-music
+        nfs:
+          server: rpi4-k8s-master
+          path: /srv/nfs/music
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emby-server
+  namespace: kestro-media
+spec:
+  selector:
+    app: emby-server
+  ports:
+  - port: 8096
+    protocol: TCP
+    targetPort: 8096
+    name: http
+  - port: 8920
+    protocol: TCP
+    targetPort: 8920
+    name: https
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: emby-ui
+  namespace: kestro-media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`media.kestro.home`)
+      kind: Rule
+      services:
+        - name: emby-server
+          port: 8096
+  tls:
+    secretName: tls-media
+---
+

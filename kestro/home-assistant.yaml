@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: home-assistant
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+  labels:
+    app: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: home-assistant
+    spec:
+      containers:
+        - name: home-assistant
+          image: "homeassistant/home-assistant:2022.9"
+          ports:
+            - name: http
+              containerPort: 8123
+              protocol: TCP
+          volumeMounts:
+            - name: home-assistant-config
+              mountPath: /config
+            - name: home-assistant-media
+              mountPath: /media
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: "200m"
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 8123
+            initialDelaySeconds: 180
+            periodSeconds: 30
+      volumes:
+        - name: home-assistant-config
+          hostPath:
+            path: "/var/home-assitant/config"
+        - name: home-assistant-media
+          hostPath:
+            path: "/media"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+spec:
+  selector:
+    app: home-assistant
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8123
+      targetPort: 8123
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: home-assistant-ui
+  namespace: home-assistant
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`home-assistant.kestro.home`)
+      kind: Rule
+      services:
+        - name: home-assistant
+          port: 8123
+  tls:
+    secretName: tls-home-assistant
+---
+

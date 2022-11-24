@@ -1,0 +1,7 @@
+[NetDev]
+Name=eth0.100
+Kind=vlan
+MACAddress=dc:a6:32:e0:fb:bf
+
+[VLAN]
+Id=100

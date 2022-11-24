@@ -1,0 +1,1 @@
+rsync -aP --delete /home/jan/Music/ pi@rpi4-k8s-master:/media/music/

@@ -1,0 +1,8 @@
+[Unit]
+Description=Automatically mount NFS Music folder
+
+[Mount]
+Where=/srv/nfs/music
+
+[Install]
+WantedBy=local-fs.target

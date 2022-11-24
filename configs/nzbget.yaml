@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nzbget
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nzbget-ui
+  namespace: nzbget
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`nzbget.kestro.home`)
+    services:
+    - name: nzbget
+      port: 6789
+  tls:
+    secretName: tls-nzbget-ui
+---

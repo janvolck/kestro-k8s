@@ -1,0 +1,11 @@
+additionalArguments:
+  - "--log.level=INFO"
+  - "--accesslog=true"
+  - "--api.insecure=true"
+  - "--api=true"
+  - "--api.dashboard=true"
+  - "--certificatesresolvers.kestro.acme.tlschallenge"
+  - "--certificatesresolvers.kestro.acme.email=janvolck@gmail.com"
+  - "--certificatesresolvers.kestro.acme.storage=/data/acme.json"
+  - "--certificatesresolvers.kestro.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+  - "--serverstransport.insecureskipverify=true"

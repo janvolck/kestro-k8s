@@ -1,0 +1,15 @@
+storage: filesystem
+
+persistence:
+  accessMode: 'ReadWriteOnce'
+  enabled: true
+  size: 10Gi
+  storageClass: 'local-storage'
+
+secrets:
+  htpasswd: ""
+
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  fsGroup: 1000

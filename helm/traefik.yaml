@@ -1,0 +1,7 @@
+additionalArguments:
+  - "--log.level=INFO"
+  - "--accesslog=true"
+  - "--api.insecure=true"
+  - "--api=true"
+  - "--api.dashboard=true"
+  - "--serverstransport.insecureskipverify=true"

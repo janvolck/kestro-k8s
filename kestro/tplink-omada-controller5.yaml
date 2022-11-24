@@ -1,0 +1,184 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kestro
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omada-deployment
+  namespace: kestro
+  labels:
+    app: kestro-omada
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kestro-omada
+  template:
+    metadata:
+      labels:
+        app: kestro-omada
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+              { "name": "media-vlan",
+                "interface": "media0",
+                "mac": "b8:27:eb:ca:ab:7f"
+              },
+              { "name": "admin-vlan",
+                "interface": "admin0",
+                "mac": "b8:27:eb:ca:ab:7e"
+              },
+              { "name": "default-macvlan",
+                "ips": [ "192.168.0.51/24"],
+                "interface": "default0",
+                "mac": "b8:27:eb:ca:ab:7c"
+              },
+              { "name": "default-macvlan",
+                "ips": [ "192.168.1.51/24"],
+                "interface": "default1",
+                "mac": "b8:27:eb:ca:ab:7d"
+              }]'
+    spec:
+      containers:
+      - name: omada-controller
+        image: mbentley/omada-controller:5.5
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8088
+        - name: https
+          protocol: TCP
+          containerPort: 8043
+        - protocol: TCP
+          containerPort: 8843
+        - protocol: UDP
+          containerPort: 29810
+        - protocol: TCP
+          containerPort: 29811
+        - protocol: TCP
+          containerPort: 29812
+        - protocol: TCP
+          containerPort: 29813
+        - protocol: TCP
+          containerPort: 29814
+        volumeMounts:
+        - mountPath: /opt/tplink/EAPController/data
+          name: omada-controller-data
+        - mountPath: /opt/tplink/EAPController/work
+          name: omada-controller-work
+        - mountPath: /opt/tplink/EAPController/logs
+          name: omada-controller-logs
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "2"
+          requests:
+            memory: 256Mi
+            cpu: "1"
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /login
+            port: 8043
+          initialDelaySeconds: 180
+          periodSeconds: 30
+      volumes:
+      - name: omada-controller-data
+        hostPath:
+          path: "/var/omada/data"
+      - name: omada-controller-work
+        hostPath:
+          path: "/var/omada/work"
+      - name: omada-controller-logs
+        hostPath:
+          path: "/var/omada/eap"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: omada-controller-web
+  namespace: kestro
+spec:
+  selector:
+    app: kestro-omada
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8088
+      targetPort: 8088
+    - name: https
+      protocol: TCP
+      port: 8043
+      targetPort: 8043
+    - name: auth
+      protocol: TCP
+      port: 8843
+      targetPort: 8843
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: omada-eap-service
+  namespace: kestro
+spec:
+  selector:
+    app: kestro-omada
+  ports:
+    - name: discovery
+      protocol: UDP
+      port: 29810
+      targetPort: 29810
+    - name: manage
+      protocol: TCP
+      port: 29811
+      targetPort: 29811
+    - name: adopt
+      protocol: TCP
+      port: 29812
+      targetPort: 29812
+    - name: upgrade
+      protocol: TCP
+      port: 29813
+      targetPort: 29813
+    - name: mgmt
+      protocol: TCP
+      port: 29814
+      targetPort: 29814
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: omada-controller-service
+  namespace: kestro
+spec:
+  selector:
+    app: kestro-omada
+  ports:
+    - name: discoovery
+      protocol: UDP
+      port: 27001
+      targetPort: 27001
+    - name: search
+      protocol: TCP
+      port: 27002
+      targetPort: 27002
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: omada-controller-database
+  namespace: kestro
+spec:
+  selector:
+    app: kestro-omada
+  ports:
+    - name: db1
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+    - name: db2
+      protocol: TCP
+      port: 27217
+      targetPort: 27217

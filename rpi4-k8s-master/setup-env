@@ -1,0 +1,9 @@
+#!/bin/bash
+SCRIPT=$(realpath ${BASH_SOURCE[0]})
+echo $SCRIPT
+SCRIPT_DIR=$(dirname $SCRIPT)
+echo $SCRIPT_DIR
+export KUBECONFIG="$SCRIPT_DIR/kube-config"
+echo $KUBECONFIG
+
+kubectl cluster-info

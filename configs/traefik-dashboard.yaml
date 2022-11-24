@@ -1,0 +1,24 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: kestro-auth
+spec:
+  basicAuth:
+    secret: kestro
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+spec:
+  entryPoints:
+  - web
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`traefik.kestro.home`)
+    services:
+    - kind: TraefikService
+      name: api@internal
+  tls:
+    secretName: tls-traefik-dashboard

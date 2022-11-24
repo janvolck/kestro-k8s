@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: kestro
+  name: pod-case-02
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+            { "name": "admin-vlan",
+              "interface": "admin0",
+              "mac": "c2:b0:57:49:48:f1"
+            },
+            { "name": "default-macvlan"
+            }]'
+spec:
+  containers:
+  - name: pod-case-02
+    image: janvolck/tools:latest-armv7
+    command:
+    - /sbin/init

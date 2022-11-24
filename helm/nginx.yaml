@@ -1,0 +1,19 @@
+---
+controller:
+  stats:
+    enabled: true
+  metrics:
+    enabled: true
+    service:
+      monitor:
+        enabled: true
+  service:
+    externalIPs: 
+    - "192.168.100.29"
+  podAnnotations:
+    enable-vts-status: "true"
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"
+  extraArgs:
+    enable-ssl-chain-completion: "false"
+    enable-ssl-passthrough: "true"
