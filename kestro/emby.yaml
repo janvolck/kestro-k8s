@@ -40,12 +40,13 @@ spec:
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
-                "mac": "b8:27:eb:ca:ab:80"
+                "mac": "b8:27:eb:ca:ab:81"
               }]'
     spec:
+      nodeName: rpi4-k8s-master
       containers:
       - name: emby-server
-        image: emby/embyserver_arm64v8:4.8.0.15
+        image: emby/embyserver_arm64v8:4.7.10.0
         ports:
         - containerPort: 8096
         - containerPort: 8920
