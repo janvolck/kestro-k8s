@@ -74,7 +74,7 @@ data:
     }
   net-conf.json: |
     {
-      "Network": "10.42.1.0/24",
+      "Network": "10.42.0.0/16",
       "Backend": {
         "Type": "vxlan"
       }
@@ -263,8 +263,9 @@ spec:
         command:
         - /opt/bin/flanneld
         args:
-#        - --kube-subnet-mgr
-#        - --iface-can-reach=192.168.100.1
+#        - --ip-masq
+        - --iface-can-reach=192.168.100.1
+        - --kube-subnet-mgr
         resources:
           requests:
             cpu: "100m"
@@ -378,8 +379,10 @@ spec:
         command:
         - /opt/bin/flanneld
         args:        
-#        - --kube-subnet-mgr
-#        - --iface-can-reach=192.168.100.1
+        args:
+        # - --ip-masq
+        - --iface-can-reach=192.168.100.1
+        - --kube-subnet-mgr
         resources:
           requests:
             cpu: "100m"
