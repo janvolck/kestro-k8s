@@ -81,7 +81,7 @@ spec:
   entryPoints:
     - mqtt
   routes:
-    - match: HostSNI(`*`)
+    - match: Host(`mqtt.kestro.home`)
       services:
         - name: mqtt
           port: 1883

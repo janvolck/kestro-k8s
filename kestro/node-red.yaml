@@ -1,0 +1,74 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: node-red
+  generation: 1
+  name: node-red
+  namespace: kestro-media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-red
+  template:
+    metadata:
+      labels:
+        app: node-red
+      annotations:
+        kubernetes.io/change-cause: "Initial creation"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: node-red
+          image: nodered/node-red:2.2.3-12
+          ports:
+            - name: mqtt
+              protocol: TCP
+              containerPort: 1880
+          volumeMounts:
+            - name: node-red-data
+              mountPath: /data
+      volumes:
+        - name: node-red-data
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/lib/node-red/data
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-red
+  labels:
+    app: node-red
+  namespace: kestro-media
+spec:
+  selector:
+    app: node-red
+  ports:
+    - name: http
+      protocol: TCP
+      port: 1880
+      targetPort: 1880
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: node-red-ui
+  namespace: kestro-media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`node-red.kestro.home`)
+      kind: Rule
+      services:
+        - name: node-red
+          port: 1880
+  tls:
+    secretName: tls-node-red
+---

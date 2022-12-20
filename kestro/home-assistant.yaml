@@ -7,7 +7,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: home-assistant
-  namespace: home-assistant
+  namespace: kestro-media
   labels:
     app: home-assistant
 spec:
@@ -67,7 +67,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: home-assistant
-  namespace: home-assistant
+  namespace: kestro-media
 spec:
   selector:
     app: home-assistant
@@ -81,7 +81,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: home-assistant-ui
-  namespace: home-assistant
+  namespace: kestro-media
 spec:
   entryPoints:
     - websecure
