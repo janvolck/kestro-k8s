@@ -1,0 +1,17 @@
+
+### Api Version
+
+GET https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/apiVersion
+Authorization: Bearer {{somfy_token}}
+
+### Setup
+
+GET https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/setup/setup
+Authorization: Bearer {{somfy_token}}
+
+### Gateway
+
+GET https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/setup/gateways
+Authorization: Bearer {{somfy_token}}
+
+

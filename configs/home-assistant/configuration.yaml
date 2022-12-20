@@ -16,6 +16,7 @@ http:
   trusted_proxies:
     - 192.168.100.0/24
     - 10.42.1.0/24
+    - 10.42.2.0/24
 
 light:
   - platform: niko_home_control

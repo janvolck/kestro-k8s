@@ -20,10 +20,16 @@ spec:
       creationTimestamp: null
       labels:
         app: home-assistant
+      annotations:
+        kubernetes.io/change-cause: "move volumes to nfs mounts"
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: home-assistant
-          image: "homeassistant/home-assistant:2022.9"
+          image: "homeassistant/home-assistant:2022.12.7"
           ports:
             - name: http
               containerPort: 8123
@@ -49,11 +55,13 @@ spec:
             periodSeconds: 30
       volumes:
         - name: home-assistant-config
-          hostPath:
-            path: "/var/home-assitant/config"
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/lib/home-assistant/config
         - name: home-assistant-media
-          hostPath:
-            path: "/media"
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/music
 ---
 kind: Service
 apiVersion: v1

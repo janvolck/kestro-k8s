@@ -1,10 +1,10 @@
 # install k3s
 # disable built-in traefik in order to work with latest version of traefik or nginx
 # disable built-in flannel in order to link multus to flannel
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable servicelb --disable traefik --flannel-backend=none --node-ip=192.168.100.50" sh -s -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --flannel-backend=none --node-ip=192.168.100.50" sh -s -
 sudo touch /var/lib/rancher/k3s/server/manifests/traefik.yaml.skip
 
-# copy k3s yaml to .kube/config and change access rights 
+# copy k3s yaml to .kube/config and change access rights
 # so that we can connect to kubelet via kubectl without permission issues
 if [ ! -e $HOME/.kube/config ]; then
     mkdir -p $HOME/.kube
@@ -42,7 +42,7 @@ case $architecture in
     armv7l)
         cni_plugins="cni-plugins-linux-arm-${cni_version}.tgz"
         ;;
-    
+
     *)
         cni_plugins="cni-plugins-linux-amd64-${cni_version}.tgz"
         ;;
@@ -62,7 +62,7 @@ sudo systemctl enable cni-dhcp-daemon.service --now
 if [ -z $(which helm) ]; then
     # wget https://get.helm.sh/helm-v3.0.2-linux-arm.tar.gz
     # tar -zxvf  helm-v3.0.2-linux-arm.tar.gz
-    wget https://get.helm.sh/helm-v3.8.0-linux-arm64.tar.gz    
+    wget https://get.helm.sh/helm-v3.8.0-linux-arm64.tar.gz
     tar -zxvf helm-v3.8.0-linux-arm64.tar.gz
     sudo mv linux-arm64/helm /usr/local/bin/
     rm -rf linux-arm64 helm-v3.8.0-linux-arm64.tar.gz

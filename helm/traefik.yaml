@@ -1,7 +1,15 @@
+logs:
+  general:
+    level: INFO
+
+ingressRoute:
+  dashboard:
+    enabled: false
+
 additionalArguments:
   - "--log.level=INFO"
   - "--accesslog=true"
-  - "--api.insecure=true"
   - "--api=true"
   - "--api.dashboard=true"
+  - "--entrypoints.mqtt.address=:1883/tcp"
   - "--serverstransport.insecureskipverify=true"

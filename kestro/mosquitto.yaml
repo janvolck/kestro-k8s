@@ -1,0 +1,87 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+  labels:
+    app: mqtt
+  generation: 1
+  name: mosquitto
+  namespace: kestro-media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mqtt
+  template:
+    metadata:
+      labels:
+        app: mqtt
+      annotations:
+        kubernetes.io/change-cause: "Update config"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: mosquitto
+          image: eclipse-mosquitto:2.0.15
+          ports:
+            - name: mqtt
+              protocol: TCP
+              containerPort: 1883
+          volumeMounts:
+            - name: mosquitto-config
+              mountPath: /mosquitto/config
+            - name: mosquitto-data
+              mountPath: /mosquitto/data
+            - name: mosquitto-log
+              mountPath: /mosquitto/log
+      volumes:
+        - name: mosquitto-config
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/lib/mosquitto/config
+        - name: mosquitto-data
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/lib/mosquitto/data
+        - name: mosquitto-log
+          nfs:
+            server: rpi4-k8s-master
+            path: /srv/nfs/lib/mosquitto/log
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mqtt
+  labels:
+    app: mqtt
+  namespace: kestro-media
+spec:
+  ports:
+    - name: mqtt
+      protocol: TCP
+      port: 1883
+      targetPort: 1883
+  selector:
+    app: mqtt
+  sessionAffinity: None
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: mqtt-ingress
+  namespace: kestro-media
+spec:
+  entryPoints:
+    - mqtt
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mqtt
+          port: 1883

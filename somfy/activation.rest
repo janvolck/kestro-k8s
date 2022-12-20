@@ -1,0 +1,38 @@
+
+### Login
+
+POST https://{{somfy_url}}/enduser-mobile-web/enduserAPI/login
+Content-Type: application/x-www-form-urlencoded
+
+userId={{somfy_userid}}&userPassword={{somfy_password}}
+
+### Generate token (update somfy_cookie with login cookie)
+
+GET https://{{somfy_url}}/enduser-mobile-web/enduserAPI/config/{{somfy_pin}}/local/tokens/generate
+Content-Type: application/json
+Cookie: {{somfy_cookie}}
+
+### Activate token (update somfy_token with generate token value)
+
+POST https://{{somfy_url}}/enduser-mobile-web/enduserAPI/config/{{somfy_pin}}/local/tokens
+Content-Type: application/json
+Cookie: {{somfy_cookie}}
+
+{
+  "label": "Kestro Home Assistant",
+  "token": "{{somfy_token}}",
+  "scope": "devmode"
+}
+
+### Get available tokens
+
+GET https://{{somfy_url}}/enduser-mobile-web/enduserAPI/config/{{somfy_pin}}/local/tokens/devmode
+Content-Type: application/json
+Cookie: {{somfy_cookie}}
+
+
+### Delete token (update somfy_uuid with value from Get available tokens)
+
+DELETE https://{{somfy_url}}/enduser-mobile-web/enduserAPI/config/{{somfy_pin}}/local/tokens/{{somfy_uuid}}
+Content-Type: application/json
+Cookie: {{somfy_cookie}}
