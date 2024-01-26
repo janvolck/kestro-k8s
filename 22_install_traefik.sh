@@ -1,3 +1,5 @@
+# kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v2.10/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+
 if [ -z "$(helm repo list | grep traefik)" ]; then
    
     helm repo add traefik https://helm.traefik.io/traefik
