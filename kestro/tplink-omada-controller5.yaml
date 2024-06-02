@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: omada-controller
-        image: mbentley/omada-controller:5.5
+        image: mbentley/omada-controller:5.13
         ports:
         - name: http
           protocol: TCP
@@ -72,11 +72,11 @@ spec:
           name: omada-controller-logs
         resources:
           limits:
+            memory: 2Gi
+            cpu: "4"
+          requests:
             memory: 1Gi
             cpu: "2"
-          requests:
-            memory: 256Mi
-            cpu: "1"
         readinessProbe:
           httpGet:
             scheme: HTTPS
