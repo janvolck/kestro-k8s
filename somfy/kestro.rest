@@ -15,3 +15,13 @@ GET https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/setup/gateways
 Authorization: Bearer {{somfy_token}}
 
 
+### register for events
+
+POST https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/events/register
+Authorization: Bearer {{somfy_token}}
+
+
+### fetch events
+POST https://192.168.100.22:8443/enduser-mobile-web/1/enduserAPI/events/8cf9c9dc-4a03-4a00-a928-dad3bbb7d1e4/fetch
+Authorization: Bearer {{somfy_token}}
+

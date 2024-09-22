@@ -21,7 +21,7 @@ spec:
       labels:
         app: home-assistant
       annotations:
-        kubernetes.io/change-cause: "move volumes to nfs mounts"
+        kubernetes.io/change-cause: "update to home-assistant 2024.9.2"
     spec:
       securityContext:
         runAsUser: 1000
@@ -29,7 +29,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: home-assistant
-          image: "homeassistant/home-assistant:2024.1.5"
+          image: "homeassistant/home-assistant:2024.9.2"
           ports:
             - name: http
               containerPort: 8123
