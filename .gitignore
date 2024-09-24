@@ -2,3 +2,4 @@ kubespray
 kube-config
 history
 secrets/auth
+somfy/settings.json
