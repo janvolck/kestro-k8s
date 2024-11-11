@@ -58,12 +58,12 @@ spec:
       volumes:
       - name: emby-config
         nfs:
-          server: rpi4-k8s-master
-          path: /srv/nfs/lib/emby
+          server: nas
+          path: /home-automation/emby
       - name: emby-music
         nfs:
-          server: rpi4-k8s-master
-          path: /srv/nfs/music
+          server: nas
+          path: /music
 ---
 apiVersion: v1
 kind: Service

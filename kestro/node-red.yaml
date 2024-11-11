@@ -25,7 +25,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: node-red
-          image: nodered/node-red:2.2.3-12
+          image: nodered/node-red:4.0.5-22
           ports:
             - name: mqtt
               protocol: TCP
@@ -36,8 +36,8 @@ spec:
       volumes:
         - name: node-red-data
           nfs:
-            server: rpi4-k8s-master
-            path: /srv/nfs/lib/node-red/data
+            server: nas
+            path: /home-automation/node-red/data
 ---
 kind: Service
 apiVersion: v1
