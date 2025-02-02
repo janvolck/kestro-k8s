@@ -52,16 +52,16 @@ spec:
       volumes:
       - name: gerbera-home
         nfs:
-          server: rpi4-k8s-master
-          path: /srv/nfs/lib/gerbera/home
+          server: nas
+          path: /home-automation/gerbera/home
       - name: gerbera-config
         nfs:
-          server: rpi4-k8s-master
-          path: /srv/nfs/lib/gerbera/config
+          server: nas
+          path: /home-automation/gerbera/config
       - name: kestro-music
         nfs:
-          server: rpi4-k8s-master
-          path: /srv/nfs/music
+          server: nas
+          path: /music
 ---
 kind: Service 
 apiVersion: v1
