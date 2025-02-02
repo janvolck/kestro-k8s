@@ -14,6 +14,8 @@ spec:
   selector:
     matchLabels:
       app: home-assistant
+  strategy:
+    type: Recreate
   template:
     metadata:
       creationTimestamp: null
