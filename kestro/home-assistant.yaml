@@ -6,6 +6,7 @@ metadata:
     deployment.kubernetes.io/revision: "2"
   labels:
     app: home-assistant
+  generation: 1
   name: home-assistant
   namespace: kestro-media
 spec:
