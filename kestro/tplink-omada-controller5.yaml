@@ -7,20 +7,26 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: omada-deployment
-  namespace: kestro
+  annotations:
+    deployment.kubernetes.io/revision: "4"
   labels:
     app: kestro-omada
+  generation: 1
+  name: omada-deployment
+  namespace: kestro
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: kestro-omada
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         app: kestro-omada
       annotations:
+        kubernetes.io/change-cause: "Update to omada 5.14.32.4"
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
@@ -43,7 +49,7 @@ spec:
     spec:
       containers:
       - name: omada-controller
-        image: mbentley/omada-controller:5.13
+        image: mbentley/omada-controller:5.14.32.4
         ports:
         - name: http
           protocol: TCP
@@ -66,8 +72,6 @@ spec:
         volumeMounts:
         - mountPath: /opt/tplink/EAPController/data
           name: omada-controller-data
-        - mountPath: /opt/tplink/EAPController/work
-          name: omada-controller-work
         - mountPath: /opt/tplink/EAPController/logs
           name: omada-controller-logs
         resources:
@@ -86,14 +90,13 @@ spec:
           periodSeconds: 30
       volumes:
       - name: omada-controller-data
-        hostPath:
-          path: "/var/omada/data"
-      - name: omada-controller-work
-        hostPath:
-          path: "/var/omada/work"
+        nfs:
+          server: nas
+          path: "/home-automation/omada/data"
       - name: omada-controller-logs
-        hostPath:
-          path: "/var/omada/eap"
+        nfs:
+          server: nas
+          path: "/home-automation/omada/logs"
 ---
 kind: Service
 apiVersion: v1
