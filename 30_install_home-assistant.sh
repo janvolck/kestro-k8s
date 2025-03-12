@@ -5,5 +5,5 @@ if kubectl -n kestro-media get secret tls-home-assistant > /dev/null 2>&1; then
 fi
 
 kubectl -n kestro-media create secret generic tls-home-assistant \
-        --from-file=tls.crt=/datapool/development/ca/servers/certs/home-assistant.cert.chain.pem \
-        --from-file=tls.key=/datapool/development/ca/servers/private/home-assistant.key.pem
+        --from-file=tls.crt=/home/jan/git/janvolck/ca/servers/certs/home-assistant.cert.chain.pem \
+        --from-file=tls.key=/home/jan/git/janvolck/ca/servers/private/home-assistant.key.pem

@@ -5,7 +5,7 @@ if kubectl -n kubernetes-dashboard get secret tls-k8s-dashboard > /dev/null 2>&1
 fi
 
 kubectl -n kubernetes-dashboard create secret generic tls-k8s-dashboard \
-        --from-file=tls.crt=/datapool/development/ca/servers/certs/k8s.cert.chain.pem \
-        --from-file=tls.key=/datapool/development/ca/servers/private/k8s.key.pem
+        --from-file=tls.crt=/home/jan/git/janvolck/ca/servers/certs/k8s.cert.chain.pem \
+        --from-file=tls.key=/home/jan/git/janvolck/ca/servers/private/k8s.key.pem
 
 kubectl apply -f configs/k8s-dashboard.yaml 

@@ -1,4 +1,4 @@
-# kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v2.10/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.3/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
 
 if [ -z "$(helm repo list | grep traefik)" ]; then
    
@@ -29,8 +29,8 @@ if kubectl get secret tls-traefik-dashboard > /dev/null 2>&1; then
 fi
 
 kubectl create secret generic tls-traefik-dashboard \
-        --from-file=tls.crt=/datapool/development/ca/servers/certs/traefik.cert.chain.pem \
-        --from-file=tls.key=/datapool/development/ca/servers/private/traefik.key.pem
+        --from-file=tls.crt=/home/jan/git/janvolck/ca/servers/certs/traefik.cert.chain.pem \
+        --from-file=tls.key=/home/jan/git/janvolck/ca/servers/private/traefik.key.pem
 
 kubectl apply -f configs/traefik-dashboard.yaml
 
