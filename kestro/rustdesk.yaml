@@ -1,0 +1,299 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rustdesk
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk-hbbs-deployment
+  namespace: rustdesk
+  labels:
+    app: rustdesk-hbbs
+  annotations:
+    updateReason: "Initial deployment"
+    updateDate: "2025-03-13"
+    updateVersion: "1.1.14"
+    updateDescription: "Initial deployment of RustDesk hbbs"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rustdesk-hbbs
+  template:
+    metadata:
+      labels:
+        app: rustdesk-hbbs
+    spec:
+      volumes:
+      - name: rustdesk-data
+        persistentVolumeClaim:
+          claimName: rustdesk-data-claim
+      containers:
+      - name: rustdesk-hbbs
+        image: rustdesk/rustdesk-server:1.1.14
+        command: ["hbbs"]
+        ports:
+        - name: hbbs-nat
+          protocol: TCP
+          containerPort: 21115
+        - name: hbbs-reg
+          protocol: UDP
+          containerPort: 21116
+        - name: hbbs-conn
+          protocol: TCP
+          containerPort: 21116
+        - name: hbbs-web
+          protocol: TCP
+          containerPort: 21118
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: hbbs-web
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+          periodSeconds: 3600
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          tcpSocket:
+            port: hbbs-web
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+          periodSeconds: 60
+          successThreshold: 1
+          failureThreshold: 5
+        volumeMounts:
+          - mountPath: "/root"
+            name: rustdesk-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk-hbbr-deployment
+  namespace: rustdesk
+  labels:
+    app: rustdesk-hbbr
+  annotations:
+    updateReason: "Initial deployment"
+    updateDate: "2025-03-13"
+    updateVersion: "1.1.14"
+    updateDescription: "Initial deployment of RustDesk hbbr"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rustdesk-hbbr
+  template:
+    metadata:
+      labels:
+        app: rustdesk-hbbr
+    spec:
+      volumes:
+      - name: rustdesk-data
+        persistentVolumeClaim:
+          claimName: rustdesk-data-claim
+      containers:
+      - name: rustdesk-hbbr
+        image: rustdesk/rustdesk-server:1.1.14
+        command: ["hbbr"]
+        ports:
+        - name: hbbr-relay
+          protocol: TCP
+          containerPort: 21117
+        - name: hbbr-web
+          protocol: TCP
+          containerPort: 21119
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: hbbr-web
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+          periodSeconds: 3600
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          tcpSocket:
+            port: hbbr-web
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+          periodSeconds: 60
+          successThreshold: 1
+          failureThreshold: 5
+        volumeMounts:
+          - mountPath: "/root"
+            name: rustdesk-data
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rustdesk-hbbs
+  namespace: rustdesk
+spec:
+  selector:
+    app: rustdesk-hbbs
+  ports:
+  - name: hbbs-nat
+    protocol: TCP
+    port: 21115
+    targetPort: 21115
+  - name: hbbs-registration
+    protocol: UDP
+    port: 21116
+    targetPort: 21116
+  - name: hbbs-connection
+    protocol: TCP
+    port: 21116
+    targetPort: 21116
+  - name: hbbs-web
+    protocol: TCP
+    port: 21118
+    targetPort: 21118
+  sessionAffinity: None
+  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rustdesk-hbbr
+  namespace: rustdesk
+spec:
+  selector:
+    app: rustdesk-hbbr
+  ports:
+  - name: hbbs-relay
+    protocol: TCP
+    port: 21117
+    targetPort: 21117
+  - name: hbbs-web
+    protocol: TCP
+    port: 21119
+    targetPort: 21119
+  sessionAffinity: None
+  type: LoadBalancer
+---
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: rustdesk-data-claim
+  namespace: rustdesk
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: /home-automation/rustdesk
+    server: nas
+  storageClassName: nfs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rustdesk-data-claim
+  namespace: rustdesk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: nfs
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name:  rustdesk-hbbs-21115-tcp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk15
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: rustdesk-hbbs
+      port: 21115
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name:  rustdesk-hbbs-21116-tcp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk16tcp
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: rustdesk-hbbs
+      port: 21116
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: rustdesk-hbbs-21116-udp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk16udp
+  routes:
+  - services:
+    - name: rustdesk-hbbs
+      port: 21116
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name:  rustdesk-hbbs-21118-tcp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk18
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: rustdesk-hbbs
+      port: 21118
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name:  rustdesk-hbbr-21117-tcp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk17
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: rustdesk-hbbr
+      port: 21117
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name:  rustdesk-hbbr-21119-tcp-ingress
+  namespace: rustdesk
+spec:
+  entryPoints:
+    - rustdesk19
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: rustdesk-hbbr
+      port: 21119
+---

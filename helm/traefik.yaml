@@ -12,4 +12,14 @@ additionalArguments:
   - "--api=true"
   - "--api.dashboard=true"
   - "--entrypoints.mqtt.address=:1883/tcp"
+  - "--entrypoints.zabbixtrapper.address=:10051/tcp"
   - "--serverstransport.insecureskipverify=true"
+
+
+#  - "--entrypoints.rustdesk15.address=:21115/tcp"
+#  - "--entrypoints.rustdesk16tcp.address=:21116/tcp"
+#  - "--entrypoints.rustdesk16udp.address=:21116/udp"
+#  - "--entrypoints.rustdesk17.address=:21117/tcp"
+#  - "--entrypoints.rustdesk18.address=:21118/tcp"
+#  - "--entrypoints.rustdesk19.address=:21119/tcp"
+#
