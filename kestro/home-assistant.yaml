@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "2"
+    deployment.kubernetes.io/revision: "3"
   labels:
     app: home-assistant
   generation: 1
@@ -22,7 +22,7 @@ spec:
       labels:
         app: home-assistant
       annotations:
-        kubernetes.io/change-cause: "update to home-assistant 2025.1"
+        kubernetes.io/change-cause: "update to home-assistant 2025.4"
     spec:
       securityContext:
         runAsUser: 1000
@@ -30,7 +30,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: home-assistant
-          image: "homeassistant/home-assistant:2025.1"
+          image: "homeassistant/home-assistant:2025.4"
           ports:
             - name: http
               containerPort: 8123
@@ -57,11 +57,11 @@ spec:
       volumes:
         - name: home-assistant-config
           nfs:
-            server: nas
+            server: 192.168.100.12
             path: /home-automation/home-assistant/config
         - name: home-assistant-media
           nfs:
-            server: nas
+            server: 192.168.100.12
             path: /music
 ---
 kind: Service

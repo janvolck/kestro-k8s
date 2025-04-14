@@ -8,7 +8,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "4"
+    deployment.kubernetes.io/revision: "5"
   labels:
     app: kestro-omada
   generation: 1
@@ -26,7 +26,7 @@ spec:
       labels:
         app: kestro-omada
       annotations:
-        kubernetes.io/change-cause: "Update to omada 5.14.32.4"
+        kubernetes.io/change-cause: "Update to omada 5.15.20.18"
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
       - name: omada-controller
-        image: mbentley/omada-controller:5.15.8.2
+        image: mbentley/omada-controller:5.15.20.18
         ports:
         - name: http
           protocol: TCP
@@ -91,11 +91,11 @@ spec:
       volumes:
       - name: omada-controller-data
         nfs:
-          server: nas
+          server: 192.168.100.12
           path: "/home-automation/omada/data"
       - name: omada-controller-logs
         nfs:
-          server: nas
+          server: 192.168.100.12
           path: "/home-automation/omada/logs"
 ---
 kind: Service
