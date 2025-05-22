@@ -26,7 +26,7 @@ spec:
       labels:
         app: kestro-omada
       annotations:
-        kubernetes.io/change-cause: "Update to omada 5.15.20.18"
+        kubernetes.io/change-cause: "Add testing-vlan"
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
@@ -36,10 +36,9 @@ spec:
                 "interface": "admin0",
                 "mac": "b8:27:eb:ca:ab:7e"
               },
-              { "name": "default-macvlan",
-                "ips": [ "192.168.0.51/24"],
-                "interface": "default0",
-                "mac": "b8:27:eb:ca:ab:7c"
+              { "name": "testing-vlan",
+                "interface": "testing0",
+                "mac": "b8:27:eb:ca:ab:80"
               },
               { "name": "default-macvlan",
                 "ips": [ "192.168.1.51/24"],

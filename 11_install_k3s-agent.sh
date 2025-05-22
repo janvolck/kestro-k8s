@@ -15,7 +15,7 @@ fi
 
 # install cni-plugins
 architecture=$(uname -m)
-cni_version="v1.1.1"
+cni_version="v1.6.2"
 cni_plugins=""
 
 

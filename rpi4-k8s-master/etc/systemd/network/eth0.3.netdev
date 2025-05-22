@@ -1,7 +1,7 @@
 [NetDev]
-Name=eth0.200
+Name=eth0.3
 Kind=vlan
 MACAddress=dc:a6:32:e0:fb:c0
 
 [VLAN]
-Id=200
+Id=3

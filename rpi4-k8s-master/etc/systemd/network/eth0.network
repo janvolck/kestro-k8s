@@ -2,6 +2,8 @@
 Name=eth0
 
 [Network]
-DHCP=no
+DHCP=yes
+VLAN=eth0.3
 VLAN=eth0.100
-VLAN=eth0.200
+
+
