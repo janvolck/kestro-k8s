@@ -26,7 +26,7 @@ spec:
       labels:
         app: kestro-omada
       annotations:
-        kubernetes.io/change-cause: "Add testing-vlan"
+        kubernetes.io/change-cause: "Update omada-controller to 5.15.20.20"
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
       - name: omada-controller
-        image: mbentley/omada-controller:5.15.20.18
+        image: mbentley/omada-controller:5.15.20.20
         ports:
         - name: http
           protocol: TCP

@@ -1,0 +1,13 @@
+
+adminPassword: "KestroAdmin"
+
+serviceDns:
+  enabled: true
+  type: ClusterIP
+  port: 53
+  targetPort: 53
+  protocol: UDP
+ 
+serviceDhcp:
+  enabled: false
+

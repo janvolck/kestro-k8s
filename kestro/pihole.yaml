@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pihole
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: pihole-dns
+#  namespace: pihole
+spec:
+  entryPoints:
+    - dns
+  routes:
+  - services:
+    - name: pihole-dns-udp
+      port: 53
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pihile-web
+#  namespace: pihole
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pihole.kestro.home`)
+      kind: Rule
+      services:
+        - name: pihole-web
+          port: 80
