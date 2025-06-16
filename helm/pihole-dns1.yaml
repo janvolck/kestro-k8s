@@ -1,0 +1,33 @@
+
+adminPassword: "KomBinnen627"
+
+serviceDns:
+  enabled: true
+
+serviceDhcp:
+  enabled: false
+
+DNS1: 1.1.1.1
+DNS2: 8.8.8.8
+
+podDnsConfig:
+  enabled: true
+  policy: "None"
+  nameservers:
+    - 127.0.0.1
+    - 1.1.1.1
+
+podAnnotations:
+  k8s.v1.cni.cncf.io/networks: '[
+    { "name": "media-vlan",
+      "interface": "media0",
+      "mac": "b8:27:eb:ca:ac:7f"
+    },
+    { "name": "admin-vlan",
+      "interface": "admin0",
+      "mac": "b8:27:eb:ca:ac:7e"
+    }]'
+
+persistentVolumeClaim:
+  enabled: true
+  existingClaim: pi-hole-pvc

@@ -11,26 +11,20 @@ additionalArguments:
   - "--accesslog=true"
   - "--api=true"
   - "--api.dashboard=true"
-  - "--entrypoints.dns.address=:53/udp"
   - "--entrypoints.mqtt.address=:1883/tcp"
   - "--entrypoints.zabbixtrapper.address=:10051/tcp"
   - "--serverstransport.insecureskipverify=true"
 
-#  - "--entrypoints.rustdesk15.address=:21115/tcp"
-#  - "--entrypoints.rustdesk16tcp.address=:21116/tcp"
-#  - "--entrypoints.rustdesk16udp.address=:21116/udp"
-#  - "--entrypoints.rustdesk17.address=:21117/tcp"
-#  - "--entrypoints.rustdesk18.address=:21118/tcp"
-#  - "--entrypoints.rustdesk19.address=:21119/tcp"
-
-
 ports:
-  dns:
-    port: 53
-    protocol: UDP
+  mqtt:
+    port: 1883
+    protocol: TCP
     expose:
       default: true
-    exposedPort: 53
-
-
-# TODO !!!! - convert zabbix and mqtt to ports and update correct ingress routes
+    exposedPort: 1883
+  zabbixtrapper:
+    port: 10051
+    protocol: TCP
+    expose:
+      default: true
+    exposedPort: 10051

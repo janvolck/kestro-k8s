@@ -59,13 +59,12 @@ sudo cp configs/cni-dhcp-daemon.service /etc/systemd/system
 sudo systemctl enable cni-dhcp-daemon.service --now
 
 # install helm
+HELM_VERSION="3.18.0"
 if [ -z $(which helm) ]; then
-    # wget https://get.helm.sh/helm-v3.0.2-linux-arm.tar.gz
-    # tar -zxvf  helm-v3.0.2-linux-arm.tar.gz
-    wget https://get.helm.sh/helm-v3.8.0-linux-arm64.tar.gz
-    tar -zxvf helm-v3.8.0-linux-arm64.tar.gz
+    wget https://get.helm.sh/helm-v${HELM_VERSION}-linux-arm64.tar.gz
+    tar -zxvf helm-v${HELM_VERSION}-linux-arm64.tar.gz
     sudo mv linux-arm64/helm /usr/local/bin/
-    rm -rf linux-arm64 helm-v3.8.0-linux-arm64.tar.gz
+    rm -rf linux-arm64 helm-v${HELM_VERSION}-linux-arm64.tar.gz
 fi
 
 #install kubernetes web UI
