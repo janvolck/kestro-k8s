@@ -69,8 +69,8 @@ spec:
   selector:
     app: mqtt
   sessionAffinity: None
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  type: ClusterIP
+  #externalTrafficPolicy: Cluster
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRouteTCP
@@ -81,7 +81,7 @@ spec:
   entryPoints:
     - mqtt
   routes:
-    - match: Host(`mqtt.kestro.home`)
+    - match: HostSNI(`*`)
       services:
         - name: mqtt
           port: 1883
