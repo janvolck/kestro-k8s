@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "1"
+    deployment.kubernetes.io/revision: "2"
   labels:
     app: node-red
   generation: 1
@@ -19,7 +19,7 @@ spec:
       labels:
         app: node-red
       annotations:
-        kubernetes.io/change-cause: "Initial creation"
+        kubernetes.io/change-cause: "Use IP address for NFS server"
     spec:
       securityContext:
         runAsUser: 1000
@@ -38,7 +38,7 @@ spec:
       volumes:
         - name: node-red-data
           nfs:
-            server: nas
+            server: 192.168.200.62
             path: /home-automation/node-red/data
 ---
 kind: Service

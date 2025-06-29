@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "4"
+    deployment.kubernetes.io/revision: "5"
   labels:
     app: mqtt
   generation: 1
@@ -19,7 +19,7 @@ spec:
       labels:
         app: mqtt
       annotations:
-        kubernetes.io/change-cause: "Update mosquitto image"
+        kubernetes.io/change-cause: "Use IP address for NFS server"
     spec:
       securityContext:
         runAsUser: 1000
@@ -42,15 +42,15 @@ spec:
       volumes:
         - name: mosquitto-config
           nfs:
-            server: nas
+            server: 192.168.200.62
             path: /home-automation/mosquitto/config
         - name: mosquitto-data
           nfs:
-            server: nas
+            server: 192.168.200.62
             path: /home-automation/mosquitto/data
         - name: mosquitto-log
           nfs:
-            server: nas
+            server: 192.168.200.62
             path: /home-automation/mosquitto/log
 ---
 kind: Service
