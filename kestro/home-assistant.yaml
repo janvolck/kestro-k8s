@@ -95,4 +95,17 @@ spec:
   tls:
     secretName: tls-home-assistant
 ---
-
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: home-assistant-ui-web
+  namespace: kestro-media
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`home-assistant.kestro.home`)
+      kind: Rule
+      services:
+        - name: home-assistant
+          port: 8123
