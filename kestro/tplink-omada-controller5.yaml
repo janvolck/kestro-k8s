@@ -8,7 +8,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "9"
+    deployment.kubernetes.io/revision: "10"
   labels:
     app: kestro-omada
   generation: 1
@@ -27,7 +27,7 @@ spec:
         app: kestro-omada
       annotations:
         # kubernetes.io/change-cause: "Update omada-controller to 5.15.24.19"
-        kubernetes.io/change-cause: "Enable testing-vlan again in order to access router"
+        kubernetes.io/change-cause: "Reduce cpu to get things running again"
         k8s.v1.cni.cncf.io/networks: '[
               { "name": "media-vlan",
                 "interface": "media0",
@@ -79,10 +79,10 @@ spec:
         resources:
           limits:
             memory: 2Gi
-            cpu: "4"
+            cpu: "2"
           requests:
             memory: 1Gi
-            cpu: "2"
+            cpu: "1"
         readinessProbe:
           httpGet:
             scheme: HTTPS

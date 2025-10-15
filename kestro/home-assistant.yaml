@@ -67,6 +67,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
+
   name: home-assistant
   namespace: kestro-media
 spec:
