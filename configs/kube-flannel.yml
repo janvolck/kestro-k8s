@@ -263,8 +263,7 @@ spec:
         command:
         - /opt/bin/flanneld
         args:
-#        - --ip-masq
-        - --iface-can-reach=192.168.100.1
+        - --ip-masq
         - --kube-subnet-mgr
         resources:
           requests:
@@ -378,10 +377,8 @@ spec:
         image: flannelcni/flannel:v0.20.1
         command:
         - /opt/bin/flanneld
-        args:        
         args:
-        # - --ip-masq
-        - --iface-can-reach=192.168.100.1
+        - --ip-masq
         - --kube-subnet-mgr
         resources:
           requests:

@@ -1,6 +1,6 @@
 kubespray
 kube-config
 history
-secrets/auth
+secrets/
 somfy/settings.json
 .vscode

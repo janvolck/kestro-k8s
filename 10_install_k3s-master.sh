@@ -59,7 +59,7 @@ sudo cp configs/cni-dhcp-daemon.service /etc/systemd/system
 sudo systemctl enable cni-dhcp-daemon.service --now
 
 # install helm
-HELM_VERSION="3.18.0"
+HELM_VERSION="4.3.0"
 if [ -z $(which helm) ]; then
     wget https://get.helm.sh/helm-v${HELM_VERSION}-linux-arm64.tar.gz
     tar -zxvf helm-v${HELM_VERSION}-linux-arm64.tar.gz
@@ -67,9 +67,10 @@ if [ -z $(which helm) ]; then
     rm -rf linux-arm64 helm-v${HELM_VERSION}-linux-arm64.tar.gz
 fi
 
-#install kubernetes web UI
-
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+# install kubernetes web UI (Headlamp)
+helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/
+helm repo update
+helm upgrade --install headlamp headlamp/headlamp --namespace kube-system
 
 echo "K3S_TOKEN: "
 sudo cat /var/lib/rancher/k3s/server/node-token

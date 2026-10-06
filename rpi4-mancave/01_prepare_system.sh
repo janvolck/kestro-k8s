@@ -32,9 +32,6 @@ sudo nmcli conn mod eth0.100 ethernet.cloned-mac-address dc:a6:32:e0:fe:02
 sudo nmcli conn add type vlan con-name eth0.200 dev eth0 id 200
 sudo nmcli conn mod eth0.200 ethernet.cloned-mac-address dc:a6:32:e0:fe:03
 
-sudo nmcli conn add type vlan con-name eth0.3 dev eth0 id 3
-sudo nmcli conn mod eth0.3 ethernet.cloned-mac-address dc:a6:32:e0:fe:04
-
 # enable cni dhcp daemon
 sudo cp ../configs/cni-dhcp-daemon.service /etc/systemd/system
 sudo systemctl enable cni-dhcp-daemon.service --now

@@ -1,8 +1,8 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: kubernetes-dashboards
-  namespace: kubernetes-dashboard
+  name: headlamp-dashboard
+  namespace: kube-system
 spec:
   entryPoints:
   - websecure
@@ -10,8 +10,8 @@ spec:
   - match: Host(`k8s.kestro.home`)
     kind: Rule
     services:
-    - name: kubernetes-dashboard
-      port: 443
+    - name: headlamp
+      port: 80
   tls:
     secretName: tls-k8s-dashboard
 ---
