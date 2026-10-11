@@ -1,0 +1,89 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kestro-esphome
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: esphome-data
+  namespace: kestro-esphome
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kestro-nas
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: esphome
+  generation: 1
+  name: esphome
+  namespace: kestro-esphome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esphome
+  template:
+    metadata:
+      labels:
+        app: esphome
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: esphome
+          image: esphome/esphome:2026.9
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 6052
+          volumeMounts:
+            - name: esphome-data
+              mountPath: /config
+      volumes:
+        - name: esphome-data
+          persistentVolumeClaim:
+            claimName: esphome-data
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: esphome
+  labels:
+    app: esphome
+  namespace: kestro-esphome
+spec:
+  selector:
+    app: esphome
+  ports:
+    - name: http
+      protocol: TCP
+      port: 6052
+      targetPort: 6052
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: esphome-ui
+  namespace: kestro-esphome
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`esphome.kestro.home`)
+      kind: Rule
+      services:
+        - name: esphome
+          port: 6052
+---
