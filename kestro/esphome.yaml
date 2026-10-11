@@ -43,8 +43,12 @@ spec:
         fsGroup: 1000
       containers:
         - name: esphome
-          image: esphome/esphome:2026.9
+          image: ghcr.io/esphome/esphome:2026.9
           env:
+          - name: HOME
+            value: /config
+          - name: UV_CACHE_DIR
+            value: /config/.cache/uv
           - name: PLATFORMIO_CORE_DIR
             value: /config/.platformio
           - name: ESPHOME_BUILD_PATH
