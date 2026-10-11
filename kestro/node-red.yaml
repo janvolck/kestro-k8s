@@ -1,4 +1,22 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kestro-nodered
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node-red-data
+  namespace: kestro-nodered
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kestro-nas
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -8,7 +26,7 @@ metadata:
     app: node-red
   generation: 1
   name: node-red
-  namespace: kestro-media
+  namespace: kestro-nodered
 spec:
   replicas: 1
   selector:
@@ -18,8 +36,6 @@ spec:
     metadata:
       labels:
         app: node-red
-      annotations:
-        kubernetes.io/change-cause: "Use IP address for NFS server"
     spec:
       securityContext:
         runAsUser: 1000
@@ -27,7 +43,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: node-red
-          image: nodered/node-red:4.0.8-22
+          image: nodered/node-red:5
           ports:
             - name: mqtt
               protocol: TCP
@@ -37,9 +53,8 @@ spec:
               mountPath: /data
       volumes:
         - name: node-red-data
-          nfs:
-            server: 192.168.200.62
-            path: /home-automation/node-red/data
+          persistentVolumeClaim:
+            claimName: node-red-data
 ---
 kind: Service
 apiVersion: v1
@@ -47,7 +62,7 @@ metadata:
   name: node-red
   labels:
     app: node-red
-  namespace: kestro-media
+  namespace: kestro-nodered
 spec:
   selector:
     app: node-red
@@ -61,7 +76,7 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: node-red-ui
-  namespace: kestro-media
+  namespace: kestro-nodered
 spec:
   entryPoints:
     - websecure

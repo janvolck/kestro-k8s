@@ -1,0 +1,115 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kestro-storage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kestro-nas-provisioner
+  namespace: kestro-storage
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kestro-nas-provisioner-runner
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: run-kestro-nas-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: kestro-nas-provisioner
+    namespace: kestro-storage
+roleRef:
+  kind: ClusterRole
+  name: kestro-nas-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: leader-locking-kestro-nas-provisioner
+  namespace: kestro-storage
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: leader-locking-kestro-nas-provisioner
+  namespace: kestro-storage
+subjects:
+  - kind: ServiceAccount
+    name: kestro-nas-provisioner
+    namespace: kestro-storage
+roleRef:
+  kind: Role
+  name: leader-locking-kestro-nas-provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kestro-nas
+provisioner: kestro.home/kestro-nas-provisioner
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+parameters:
+  archiveOnDelete: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kestro-nas-provisioner
+  namespace: kestro-storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kestro-nas-provisioner
+  template:
+    metadata:
+      labels:
+        app: kestro-nas-provisioner
+    spec:
+      serviceAccountName: kestro-nas-provisioner
+      containers:
+        - name: kestro-nas-provisioner
+          image: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+          env:
+            - name: PROVISIONER_NAME
+              value: kestro.home/kestro-nas-provisioner
+            - name: NFS_SERVER
+              value: 192.168.200.62
+            - name: NFS_PATH
+              value: /home-automation
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 192.168.200.62
+            path: /home-automation
