@@ -44,6 +44,11 @@ spec:
       containers:
         - name: esphome
           image: esphome/esphome:2026.9
+          env:
+          - name: PLATFORMIO_CORE_DIR
+            value: /config/.platformio
+          - name: ESPHOME_BUILD_PATH
+            value: /config/.esphome
           ports:
             - name: http
               protocol: TCP
